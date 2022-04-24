@@ -2,19 +2,18 @@
 # coding: utf-8
 
 
-import sys
 import os
-import matplotlib.pyplot as plt
+import sys
+from glob import glob
+from typing import *
+
 import numpy as np
-import cv2
 from PIL import Image as im
 from PIL.ImageShow import IPythonViewer
 from scipy import ndimage
-from matplotlib.pyplot import figure
-from glob import glob
 from tqdm import tqdm
 
-from typing import *
+from utils import binarize, take_central_stripe_bin
 
 # ### Utils
 
@@ -34,20 +33,6 @@ def tweak_colors(image):
                 image_data[loop1, loop2] = 255, 255, 255, a
             if abs(r - b) + abs(r - g) < 50:
                 image_data[loop1, loop2] = 255, 255, 255, a
-
-
-"""
-get a representation of this picture as an numpy matrix 
-numbers are floating-point non-integers (8-bit pixels, black and white)
-"""
-
-
-def binarize(pic):
-    wd, ht = pic.size
-    pixels = np.array(pic.convert('L').getdata(), np.uint8)
-    bin_img = 1 - (pixels.reshape((ht, wd)) / 255.0)
-    # plt.imshow(bin_img, cmap='gray')
-    return bin_img
 
 
 """
@@ -153,20 +138,7 @@ def rotate(page: 'Page', delta=0.05, limit=0.5):
         page.original = page.original.rotate(new_best_angle)
 
 
-""" how high up and how low down from the axis does the crop of a line go """
-INTERVAL_FOR_STRIPE = 10
-
-
-def take_central_stripe(binary: np.array):
-    h, w = binary.shape
-    axis = int(h * 0.45)
-    upper, lower = axis - INTERVAL_FOR_STRIPE, axis + INTERVAL_FOR_STRIPE
-    return binary[upper:lower, :]
-
-
-# ### Classes
-
-
+# Classes
 class Page:
     def __init__(self, path: str):
         self.path = path
@@ -205,9 +177,6 @@ class Work:
         return f"Work({self.work_id}, {self.pages})"
 
 
-# ### Read files into memory
-
-
 def segmentation(works):
     tqdm._instances.clear()
     for work in tqdm(works):
@@ -225,13 +194,13 @@ def segmentation(works):
                 line = page.body.crop(box)
                 location = chopped_loc + str(id) + ext
 
-                ## 1900 is the experimantally derived sum of pixels in a scan of an empty line
+                # 1900 is the experimentally derived sum of pixels in a scan of an empty line
                 # However, if one of the guiding lines is not included in a cropped image, it may pass as a normal line
                 # Also, sometimes parts of letters can appear on lines above or below.
                 # To fight these two problems, we will also detect empty line by counting pixels in the center of it.
                 binary = binarize(line)
-                if np.sum(binary) < 1900 or np.sum(take_central_stripe(binary)) < 50:
-                    print(f"Ignored: {location}")
+                if np.sum(binary) < 1900 or np.sum(take_central_stripe_bin(binary)) < 50:
+                    # print(f"Ignored: {location}")
                     continue
                 tweak_colors(line)
                 line.save(location)
@@ -241,8 +210,6 @@ def segmentation(works):
 
 
 # Works like a charm! Now let's do that to all the data
-
-
 if __name__ == "__main__":
     DATA_LOCATION = f"{sys.argv[1]}"
     FILE_PATHS = glob(DATA_LOCATION + "/**/*.png", recursive=True)

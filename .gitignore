@@ -1,5 +1,5 @@
 /data/
-/code/segmentation*.log
+/code/logs/*
 /code/.ipynb_checkpoints
 /.idea
 /chopped/
