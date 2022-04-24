@@ -186,7 +186,7 @@ def segmentation(works):
             file, ext = os.path.splitext(page.path)
             page_loc_split = os.path.normpath(file).split(os.path.sep)
             chopped_loc = "/".join(
-                page_loc_split[:-3] + ['experiment', page_loc_split[-2], work.work_id, page_loc_split[-1]]) + '/'
+                page_loc_split[:-3] + ['chopped', page_loc_split[-2], work.work_id, page_loc_split[-1]]) + '/'
             os.makedirs(chopped_loc, mode=0o0777, exist_ok=True)
             for id, bound in enumerate(bounds):
                 a, b = bound
