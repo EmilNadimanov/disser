@@ -1,0 +1,6 @@
+/data/
+/code/segmentation*.log
+/code/.ipynb_checkpoints
+/.idea
+/chopped/
+/experiment/
