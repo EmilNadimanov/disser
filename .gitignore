@@ -1,8 +1,8 @@
 /data/
 /code/logs/
-/code/.ipynb_checkpoints
 /.idea
 /chopped/
 /experiment/
 /formatted_data/chars_images/augmented_chars/
 /formatted_data/chars_images/chars/
+.ipynb_checkpoints
