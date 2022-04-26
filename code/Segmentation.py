@@ -185,8 +185,8 @@ def segmentation(works):
             b_height, b_width = page.bin_img.shape
             file, ext = os.path.splitext(page.path)
             page_loc_split = os.path.normpath(file).split(os.path.sep)
-            chopped_loc = "/".join(
-                page_loc_split[:-3] + ['chopped', page_loc_split[-2], work.work_id, page_loc_split[-1]]) + '/'
+            chopped_loc = page_loc_split[:-3] + ['chopped', page_loc_split[-2], work.work_id, page_loc_split[-1]]
+            chopped_loc = '/'.join(chopped_loc) + '/'
             os.makedirs(chopped_loc, mode=0o0777, exist_ok=True)
             for id, bound in enumerate(bounds):
                 a, b = bound
