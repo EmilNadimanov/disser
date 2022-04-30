@@ -134,8 +134,8 @@ def rotate(page: 'Page', delta=0.05, limit=0.5):
     if (abs(new_best_angle) - limit) <= delta:
         data = ndimage.rotate(page.bin_img, new_best_angle, reshape=False, order=0)
         page.bin_img = data
-        page.body = page.body.rotate(new_best_angle)
-        page.original = page.original.rotate(new_best_angle)
+        page.body = page.body.rotate(new_best_angle, expand=True, fillcolor=(255,255,255), resample=PIL.Image.Resampling.BICUBIC)
+        page.original = page.original.rotate(new_best_angle, expand=True, fillcolor=(255,255,255), resample=PIL.Image.Resampling.BICUBIC)
 
 
 # Classes
@@ -194,22 +194,18 @@ def segmentation(works):
                 line = page.body.crop(box)
                 location = chopped_loc + str(id) + ext
 
-                # 1900 is the experimentally derived sum of pixels in a scan of an empty line
-                # However, if one of the guiding lines is not included in a cropped image, it may pass as a normal line
-                # Also, sometimes parts of letters can appear on lines above or below.
-                # To fight these two problems, we will also detect empty line by counting pixels in the center of it.
+                # detecting empty lines by counting pixels in the center of it.
+                tweak_colors(line)
                 binary = binarize(line)
-                if np.sum(binary) < 1900 or np.sum(take_central_stripe_bin(binary)) < 50:
+                if np.sum(take_central_stripe_bin(binary)) < 50:
                     # print(f"Ignored: {location}")
                     continue
-                tweak_colors(line)
                 line.save(location)
 
-                if b - a < 35 or b - a > 55:
+                if b - a < 45 or b - a > 55:
                     print(f"Malformed text line of height {b - a} in span {a, b}: {location}")
 
 
-# Works like a charm! Now let's do that to all the data
 if __name__ == "__main__":
     DATA_LOCATION = f"{sys.argv[1]}"
     FILE_PATHS = glob(DATA_LOCATION + "/**/*.png", recursive=True)
