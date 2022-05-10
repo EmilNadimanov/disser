@@ -1,21 +1,26 @@
 import numpy as np
 from PIL import Image
 
-INTERVAL_FOR_STRIPE = 10
+STRIPE_INTERVAL_UP = 15
+STRIPE_INTERVAL_DOWN = 10
 
-def take_central_stripe_bin(binary: np.array, interval: int = INTERVAL_FOR_STRIPE):
+def take_central_stripe_bin(binary: np.array,
+                            down: int = STRIPE_INTERVAL_DOWN,
+                            up: int = STRIPE_INTERVAL_UP):
     """ take a center line of a 2D np-array representation of a picture"""
     h, w = binary.shape
-    axis = h // 2
-    upper, lower = axis - interval, axis + interval
+    axis = int(h * 0.55)
+    upper, lower = axis - up, axis + down
     return binary[upper:lower, :]
 
-def take_central_stripe(image: Image, interval: int = INTERVAL_FOR_STRIPE):
+def take_central_stripe(image: Image,
+                        down: int = STRIPE_INTERVAL_DOWN,
+                        up: int = STRIPE_INTERVAL_UP):
     """ take a center line of a Pillow image"""
     w, h = image.size
-    axis = h // 2
+    axis = int(h * 0.55)
 
-    upper, lower = (axis - interval, axis + interval)
+    upper, lower = (axis - up, axis + down)
     return image.crop((0, upper, w, lower))
 
 def binarize(pic):
