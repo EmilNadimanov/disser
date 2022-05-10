@@ -5,4 +5,7 @@
 /experiment/
 /formatted_data/chars_images/augmented_chars/
 /formatted_data/chars_images/chars/
+/formatted_data/words/
+/formatted_data/word_alignment/
 .ipynb_checkpoints
+**.zip
