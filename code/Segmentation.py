@@ -8,8 +8,8 @@ from glob import glob
 from typing import *
 
 import numpy as np
+import PIL
 from PIL import Image as im
-from PIL.ImageShow import IPythonViewer
 from scipy import ndimage
 from tqdm import tqdm
 
@@ -152,7 +152,7 @@ class Page:
     def _cropped(self):
         (width, height) = self.original.size
         if self.primary:
-            borders = (0, height * 0.284, width * 0.9, height * 0.89)
+            borders = (0, height * 0.278, width * 0.9, height * 0.89)
         else:
             borders = (width * 0.04, height * 0.05, width * 0.9, height * 0.89)
         return self.original.crop(borders)
@@ -197,6 +197,7 @@ def segmentation(works):
                 # detecting empty lines by counting pixels in the center of it.
                 tweak_colors(line)
                 binary = binarize(line)
+                #print(f"location: {location}, pixels: {np.sum(take_central_stripe_bin(binary))}")
                 if np.sum(take_central_stripe_bin(binary)) < 50:
                     # print(f"Ignored: {location}")
                     continue
@@ -209,7 +210,6 @@ def segmentation(works):
 if __name__ == "__main__":
     DATA_LOCATION = f"{sys.argv[1]}"
     FILE_PATHS = glob(DATA_LOCATION + "/**/*.png", recursive=True)
-    viewer = IPythonViewer()
 
     works = dict()
     for path in FILE_PATHS:
