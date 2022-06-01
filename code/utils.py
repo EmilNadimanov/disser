@@ -15,10 +15,12 @@ def take_central_stripe_bin(binary: np.array,
 
 def take_central_stripe(image: Image,
                         down: int = STRIPE_INTERVAL_DOWN,
-                        up: int = STRIPE_INTERVAL_UP):
+                        up: int = STRIPE_INTERVAL_UP,
+                        axis = None):
     """ take a center line of a Pillow image"""
     w, h = image.size
-    axis = int(h * 0.55)
+    if axis is None:
+        axis = int(h * 0.55)
 
     upper, lower = (axis - up, axis + down)
     return image.crop((0, upper, w, lower))
